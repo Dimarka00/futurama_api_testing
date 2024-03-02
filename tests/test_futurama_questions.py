@@ -69,3 +69,17 @@ class TestQuestions:
         )
 
         validate_schema(json_response, DefaultQuestion.model_json_schema())
+
+    @allure.title('Delete question by id')
+    def test_delete_question_api(self,
+                                 function_question: DefaultQuestion,
+                                 class_questions_client: QuestionsClient):
+        delete_question_response = class_questions_client.delete_question_api(
+            function_question.id
+        )
+        get_question_response = class_questions_client.get_question_by_id_api(
+            function_question.id
+        )
+
+        assert_status_code(delete_question_response, 200)
+        assert_status_code(get_question_response, 404)
