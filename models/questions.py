@@ -19,12 +19,12 @@ class DefaultQuestion(BaseModel):
 
 
 class UpdateQuestion(BaseModel):
-    question: str = Field(default_factory=random_string)
-    possible_answers: list[str] = Field(
+    question: str | None = Field(default_factory=random_string)
+    possible_answers: list[str] | None = Field(
         alias='possibleAnswers',
         default_factory=random_list_of_strings
     )
-    correct_answer: str | int = Field(
+    correct_answer: str | None = Field(
         alias='correctAnswer',
         default_factory=random_string
     )
