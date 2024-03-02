@@ -2,7 +2,7 @@ import allure
 from requests import Response
 
 from client.api_client import ApiClient
-from models.questions import DefaultQuestion
+from models.questions import DefaultQuestion, UpdateQuestion
 from utils.constants.routes import APIRoutes
 
 
@@ -22,7 +22,7 @@ class QuestionsClient(ApiClient):
                                    json=payload.model_dump(by_alias=True))
 
     @allure.step('Updating question with id "{question_id}"')
-    def update_question_api(self, question_id: int, payload: DefaultQuestion):
+    def update_question_api(self, question_id: int, payload: UpdateQuestion):
         return self.client.request('PATCH',
                                    f'{APIRoutes.QUESTIONS}/{question_id}',
                                    json=payload.model_dump(by_alias=True))

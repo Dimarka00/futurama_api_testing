@@ -2,7 +2,7 @@ import allure
 import pytest
 
 from base.api.questions_api import QuestionsClient
-from models.questions import DefaultQuestionsList, DefaultQuestion
+from models.questions import DefaultQuestionsList, DefaultQuestion, UpdateQuestion
 from utils.assertions.assertions_functions import assert_status_code, assert_question
 from utils.assertions.validate_schema import validate_schema
 
@@ -51,3 +51,21 @@ class TestQuestions:
 
         validate_schema(json_response, DefaultQuestion.model_json_schema())
 
+    @allure.title('Update question by id')
+    def test_update_question_api(self,
+                                 function_question: DefaultQuestion,
+                                 class_questions_client: QuestionsClient):
+        payload = UpdateQuestion()
+
+        response = class_questions_client.update_question_api(
+            function_question.id, payload
+        )
+        json_response = response.json()
+
+        assert_status_code(response, 200)
+        assert_question(
+            expected_question=json_response,
+            actual_question=payload
+        )
+
+        validate_schema(json_response, DefaultQuestion.model_json_schema())
