@@ -8,7 +8,7 @@ class HTTPClient:
     """
 
     def __init__(self):
-        self.base_url = "https://sampleapis.com/api-list/futurama"
+        self.base_url = "https://api.sampleapis.com/futurama"
 
     @allure.step('Making "{method}" to "{url}"')
     def request(self, method, url, **kwargs):
