@@ -9,7 +9,7 @@ def assert_status_code(response, expected_code):
         assert response.status_code == expected_code
 
 
-def assert_post(
+def assert_question(
         expected_question: QuestionDict,
         actual_question: DefaultQuestion | UpdateQuestion
 ):
@@ -18,10 +18,10 @@ def assert_post(
             assert (expected_question["id"]) == actual_question.id
 
     with allure.step(f'Checking that "Question "question" equals to {actual_question.question}'):
-        assert (expected_question["question"]) == actual_question.user_id
+        assert (expected_question["question"]) == actual_question.question
 
     with allure.step(f'Checking that "Question possibleAnswers" equals to {actual_question.possible_answers}'):
         assert (expected_question["possibleAnswers"]) == actual_question.possible_answers
 
     with allure.step(f'Checking that "Question correctAnswers" equals to {actual_question.correct_answer}'):
-        assert (expected_question["correctAnswers"]) == actual_question.correct_answer
+        assert (expected_question["correctAnswer"]) == actual_question.correct_answer
