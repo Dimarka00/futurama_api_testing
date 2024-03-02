@@ -27,9 +27,27 @@ class TestQuestions:
                                 class_questions_client: QuestionsClient):
         response = class_questions_client.get_question_by_id_api(function_question.id)
         json_response = response.json()
+
         assert_status_code(response, 200)
         assert_question(
             expected_question=json_response,
             actual_question=function_question
         )
+
         validate_schema(json_response, DefaultQuestion.model_json_schema())
+
+    @allure.title('Create new question')
+    def test_create_new_question_api(self, class_questions_client: QuestionsClient):
+        payload = DefaultQuestion()
+
+        response = class_questions_client.create_question_api(payload)
+        json_response = response.json()
+
+        assert_status_code(response, 201)
+        assert_question(
+            expected_question=json_response,
+            actual_question=payload
+        )
+
+        validate_schema(json_response, DefaultQuestion.model_json_schema())
+
