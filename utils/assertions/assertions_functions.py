@@ -25,3 +25,9 @@ def assert_question(
 
     with allure.step(f'Checking that "Question correctAnswers" equals to {actual_question.correct_answer}'):
         assert (expected_question["correctAnswer"]) == actual_question.correct_answer
+
+
+@allure.step('Validating ids')
+def assert_ids_is_equals(question_id, response_id):
+    with allure.step(f'Checking that {question_id} equals to {response_id}'):
+        assert question_id == response_id
