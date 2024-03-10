@@ -9,6 +9,7 @@ def assert_status_code(response, expected_code):
         assert response.status_code == expected_code
 
 
+@allure.step('Validating that expected question equals to actual question')
 def assert_question(
         expected_question: QuestionDict,
         actual_question: DefaultQuestion | UpdateQuestion
@@ -31,3 +32,21 @@ def assert_question(
 def assert_ids_is_equals(question_id, response_id):
     with allure.step(f'Checking that {question_id} equals to {response_id}'):
         assert question_id == response_id
+
+
+@allure.step('Validating error text')
+def assert_error_text(json_response):
+    actual_text = {
+            "error": 400,
+            "message": "The data you are sending does not match the existing data object. Check out the expected "
+                       "shape versus what was sent.",
+            "expected": {
+                "id": "number",
+                "question": "string",
+                "possibleAnswers": "array",
+                "correctAnswer": "string"
+            },
+            "received": {}
+        }
+    with allure.step(f"Checking that {json_response} equals to {actual_text}"):
+        assert json_response == actual_text

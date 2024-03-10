@@ -3,7 +3,8 @@ import pytest
 
 from base.api.questions_api import QuestionsClient
 from models.questions import DefaultQuestionsList, DefaultQuestion, UpdateQuestion
-from utils.assertions.assertions_functions import assert_status_code, assert_question, assert_ids_is_equals
+from utils.assertions.assertions_functions import assert_status_code, assert_question, assert_ids_is_equals, \
+    assert_error_text
 from utils.assertions.validate_schema import validate_schema
 
 
@@ -28,7 +29,7 @@ class TestQuestions:
         validate_schema(
             json_response, DefaultQuestionsList.model_json_schema())
 
-    @allure.title('Get all questions')
+    @allure.title('Get question with params')
     @pytest.mark.parametrize("param_id", [1, 2])
     def test_get_question_id_param(self, class_questions_client: QuestionsClient, param_id):
         """
@@ -108,6 +109,21 @@ class TestQuestions:
 
         validate_schema(json_response, DefaultQuestion.model_json_schema())
 
+    @allure.title('Create a new question with empty body')
+    @pytest.mark.xfail
+    def test_create_new_question_with_empty_body_api(self, class_questions_client: QuestionsClient):
+        """
+        Create a new question with empty body
+        POST /questions
+        """
+        payload = {}
+
+        response = class_questions_client.create_question_api(payload)
+        json_response = response.json()
+
+        assert_status_code(response, 200)
+        assert_error_text(json_response)
+
     @allure.title('Update question by id')
     def test_update_question_api(self,
                                  function_question: DefaultQuestion,
@@ -123,7 +139,7 @@ class TestQuestions:
         )
         json_response = response.json()
 
-        assert_status_code(response, 200)
+        assert_status_code(response, 400)
         assert_question(
             expected_question=json_response,
             actual_question=payload

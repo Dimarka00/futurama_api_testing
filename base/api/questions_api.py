@@ -16,10 +16,15 @@ class QuestionsClient(ApiClient):
         return self.client.request('GET', f'{APIRoutes.QUESTIONS}/{question_id}')
 
     @allure.step('Creating question')
-    def create_question_api(self, payload: DefaultQuestion):
-        return self.client.request('POST',
-                                   APIRoutes.QUESTIONS,
-                                   json=payload.model_dump(by_alias=True))
+    def create_question_api(self, payload: DefaultQuestion | dict):
+        if isinstance(payload, DefaultQuestion):
+            return self.client.request('POST',
+                                       APIRoutes.QUESTIONS,
+                                       json=payload.model_dump(by_alias=True))
+        elif isinstance(payload, dict):
+            return self.client.request('POST',
+                                       APIRoutes.QUESTIONS,
+                                       json=payload)
 
     @allure.step('Updating question with id "{question_id}"')
     def update_question_api(self, question_id: int, payload: UpdateQuestion):
@@ -35,4 +40,3 @@ class QuestionsClient(ApiClient):
         payload = DefaultQuestion()
         response = self.create_question_api(payload)
         return DefaultQuestion(**response.json())
-
