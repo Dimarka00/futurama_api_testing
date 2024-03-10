@@ -8,8 +8,8 @@ from utils.constants.routes import APIRoutes
 
 class QuestionsClient(ApiClient):
     @allure.step('Getting all questions')
-    def get_all_questions_api(self) -> Response:
-        return self.client.request('GET', APIRoutes.QUESTIONS)
+    def get_all_questions_api(self, *ids) -> Response:
+        return self.client.request('GET', APIRoutes.QUESTIONS, params={'id': ids} if ids else None)
 
     @allure.step('Getting question with id "{question_id}"')
     def get_question_by_id_api(self, question_id: int):
