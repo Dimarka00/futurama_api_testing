@@ -17,7 +17,7 @@ class TestQuestions:
     """
 
     @allure.title('Get all questions')
-    def test_get_questions(self, class_questions_client: QuestionsClient):
+    def test_get_questions_api(self, class_questions_client: QuestionsClient):
         """
         Get list of all questions with default params
         GET /questions
@@ -32,7 +32,7 @@ class TestQuestions:
 
     @allure.title('Get question with params')
     @pytest.mark.parametrize("param_id", [1, 2])
-    def test_get_question_id_param(self, class_questions_client: QuestionsClient, param_id):
+    def test_get_question_id_param_api(self, class_questions_client: QuestionsClient, param_id):
         """
         Get question by id e.g. 1, 2
         GET /questions
@@ -46,7 +46,7 @@ class TestQuestions:
             json_response, DefaultQuestionsList.model_json_schema())
 
     @allure.title('Get question by id')
-    def test_get_question_by_id(self,
+    def test_get_question_by_id_api(self,
                                 function_question: DefaultQuestion,
                                 class_questions_client: QuestionsClient):
         """
@@ -66,7 +66,7 @@ class TestQuestions:
 
     @allure.title('Get question by existing id')
     @pytest.mark.parametrize('question_id', [1, 3, 5])
-    def test_get_question_by_existing_id(self, class_questions_client: QuestionsClient, question_id):
+    def test_get_question_by_existing_id_api(self, class_questions_client: QuestionsClient, question_id):
         """
         Get question by existing id, e.g. 1, 3, 5
         GET /questions/{question_id}
@@ -81,7 +81,7 @@ class TestQuestions:
 
     @allure.title('Get question by not existing id')
     @pytest.mark.parametrize('question_id', [-854543, -343553, 0])
-    def test_get_question_by_not_existing_id(self, class_questions_client: QuestionsClient, question_id):
+    def test_get_question_by_not_existing_id_api(self, class_questions_client: QuestionsClient, question_id):
         """
         Get question by not existing id, e.g. -854543, -343553, 0
         GET /questions/{question_id}
@@ -147,7 +147,7 @@ class TestQuestions:
         validate_schema(json_response, DefaultQuestion.model_json_schema())
 
     @allure.title('Update question by id with empty body')
-    def test_update_object_with_empty_body(self,
+    def test_update_object_with_empty_body_api(self,
                                            function_question: DefaultQuestion,
                                            class_questions_client: QuestionsClient):
         exp_json = {'id': function_question.id, 'question': None, 'possibleAnswers': None,
