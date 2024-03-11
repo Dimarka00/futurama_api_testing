@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 
 from pydantic import BaseModel, Field, RootModel
 
@@ -28,6 +28,13 @@ class UpdateQuestion(BaseModel):
         alias='correctAnswer',
         default_factory=random_string
     )
+
+
+class QuestionUpdateOut(BaseModel):
+    id: int
+    question: Optional[str] = None
+    possible_answers: Optional[list[str]] = None
+    correct_answer: Optional[str | int] = None
 
 
 class DefaultQuestionsList(RootModel):

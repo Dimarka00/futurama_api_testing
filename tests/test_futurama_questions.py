@@ -2,7 +2,7 @@ import allure
 import pytest
 
 from base.api.questions_api import QuestionsClient
-from models.questions import DefaultQuestionsList, DefaultQuestion, UpdateQuestion
+from models.questions import DefaultQuestionsList, DefaultQuestion, UpdateQuestion, QuestionUpdateOut
 from utils.assertions.assertions_functions import assert_status_code, assert_question, assert_ids_is_equals, \
     assert_error_text
 from utils.assertions.validate_schema import validate_schema
@@ -15,6 +15,7 @@ class TestQuestions:
     """
     Tests for /questions
     """
+
     @allure.title('Get all questions')
     def test_get_questions(self, class_questions_client: QuestionsClient):
         """
@@ -116,12 +117,10 @@ class TestQuestions:
         Create a new question with empty body
         POST /questions
         """
-        payload = {}
-
-        response = class_questions_client.create_question_api(payload)
+        response = class_questions_client.create_question_api(payload={})
         json_response = response.json()
 
-        assert_status_code(response, 200)
+        assert_status_code(response, 400)
         assert_error_text(json_response)
 
     @allure.title('Update question by id')
@@ -139,7 +138,7 @@ class TestQuestions:
         )
         json_response = response.json()
 
-        assert_status_code(response, 400)
+        assert_status_code(response, 200)
         assert_question(
             expected_question=json_response,
             actual_question=payload
@@ -147,10 +146,24 @@ class TestQuestions:
 
         validate_schema(json_response, DefaultQuestion.model_json_schema())
 
-    @allure.title('Delete question by id')
-    def test_delete_question_api(self,
-                                 function_question: DefaultQuestion,
-                                 class_questions_client: QuestionsClient):
+    @allure.title('Update question by id with empty body')
+    def test_update_object_with_empty_body(self,
+                                           function_question: DefaultQuestion,
+                                           class_questions_client: QuestionsClient):
+        exp_json = {'id': function_question.id, 'question': None, 'possibleAnswers': None,
+                    'correctAnswer': None}
+        response = class_questions_client.update_question_api(
+            exp_json['id'], exp_json
+        )
+        json_response = response.json()
+
+        assert_status_code(response, 200)
+        validate_schema(json_response, QuestionUpdateOut.model_json_schema())
+
+    @allure.title('Delete existing question by id')
+    def test_delete_existing_question_api(self,
+                                          function_question: DefaultQuestion,
+                                          class_questions_client: QuestionsClient):
         """
         Delete an existing question by id
         DELETE /questions/{question_id}
@@ -164,3 +177,17 @@ class TestQuestions:
 
         assert_status_code(delete_question_response, 200)
         assert_status_code(get_question_response, 404)
+
+    @allure.title('Delete not existing question by id')
+    @pytest.mark.parametrize('question_id', [-45435, -34134, 0])
+    def test_delete_not_existing_question_api(self,
+                                              class_questions_client: QuestionsClient,
+                                              question_id):
+        """
+        Delete not existing question by id
+        DELETE /questions/{question_id}
+        """
+        delete_question_response = class_questions_client.delete_question_api(
+            question_id
+        )
+        assert_status_code(delete_question_response, 404)

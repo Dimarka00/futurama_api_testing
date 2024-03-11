@@ -9,7 +9,10 @@ from utils.constants.routes import APIRoutes
 class QuestionsClient(ApiClient):
     @allure.step('Getting all questions')
     def get_all_questions_api(self, *ids) -> Response:
-        return self.client.request('GET', APIRoutes.QUESTIONS, params={'id': ids} if ids else None)
+        if ids:
+            return self.client.request('GET', "/questions/", params={'id': ids} if ids else None)
+        else:
+            return self.client.request('GET', APIRoutes.QUESTIONS)
 
     @allure.step('Getting question with id "{question_id}"')
     def get_question_by_id_api(self, question_id: int):
@@ -27,10 +30,15 @@ class QuestionsClient(ApiClient):
                                        json=payload)
 
     @allure.step('Updating question with id "{question_id}"')
-    def update_question_api(self, question_id: int, payload: UpdateQuestion):
-        return self.client.request('PATCH',
-                                   f'{APIRoutes.QUESTIONS}/{question_id}',
-                                   json=payload.model_dump(by_alias=True))
+    def update_question_api(self, question_id: int, payload: UpdateQuestion | dict):
+        if isinstance(payload, UpdateQuestion):
+            return self.client.request('PATCH',
+                                       f'{APIRoutes.QUESTIONS}/{question_id}',
+                                       json=payload.model_dump(by_alias=True))
+        elif isinstance(payload, dict):
+            return self.client.request('PATCH',
+                                       f'{APIRoutes.QUESTIONS}/{question_id}',
+                                       json=payload)
 
     @allure.step('Deleting question with id "{question_id}"')
     def delete_question_api(self, question_id: int):
